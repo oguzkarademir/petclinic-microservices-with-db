@@ -2140,7 +2140,11 @@ git push origin dev
 
 ## MSP 17 - Prepare Petlinic Kubernetes YAML Files
 
+<<<<<<< HEAD
 * Create `feature/msp-17` branch from `dev`.
+=======
+* Create `feature/msp-17` branch from `release`.
+>>>>>>> feature/msp-18
 
 ``` bash
 git checkout dev
@@ -2368,7 +2372,11 @@ AWS_REGION=us-east-1 helm repo add stable-petclinicapp s3://petclinic-helm-chart
 * Update `version` and `appVersion` field of `k8s/petclinic_chart/Chart.yaml` file as below for testing.
 
 ```yaml
+<<<<<<< HEAD
 version: 0.0.1
+=======
+version: 1.1.1
+>>>>>>> feature/msp-18
 appVersion: 0.1.0
 ```
 
@@ -2395,10 +2403,17 @@ helm search repo stable-petclinicapp
 
 ```bash
 NAME                                    CHART VERSION   APP VERSION     DESCRIPTION                
+<<<<<<< HEAD
 stable-petclinicapp/petclinic_chart     0.0.1           0.1.0           A Helm chart for Kubernetes
 ```
 
 * In Chart.yaml, set the `version` value to `0.0.2` in Chart.yaml, and then package the chart, this time changing the version in Chart.yaml to 0.0.2. Version control is ideally achieved through automation by using tools like GitVersion or Jenkins build numbers in a CI/CD pipeline. 
+=======
+stable-petclinicapp/petclinic_chart     1.1.1           0.1.0           A Helm chart for Kubernetes
+```
+
+* In Chart.yaml, set the `version` value to `1.1.2` in Chart.yaml, and then package the chart, this time changing the version in Chart.yaml to 1.1.2. Version control is ideally achieved through automation by using tools like GitVersion or Jenkins build numbers in a CI/CD pipeline. 
+>>>>>>> feature/msp-18
 
 ```bash
 helm package petclinic_chart/
@@ -2422,7 +2437,11 @@ helm search repo stable-petclinicapp -l
 
 ```bash
 NAME                                    CHART VERSION   APP VERSION     DESCRIPTION                
+<<<<<<< HEAD
 stable-petclinicapp/petclinic_chart     0.0.2           0.1.0           A Helm chart for Kubernetes
+=======
+stable-petclinicapp/petclinic_chart     1.1.2           0.1.0           A Helm chart for Kubernetes
+>>>>>>> feature/msp-18
 ```
 
 * To view all the available versions of a chart execute following command.
@@ -2435,8 +2454,13 @@ helm search repo stable-petclinicapp --versions
 
 ```bash
 NAME                                    CHART VERSION   APP VERSION     DESCRIPTION                
+<<<<<<< HEAD
 stable-petclinicapp/petclinic_chart     0.0.2           0.1.0           A Helm chart for Kubernetes
 stable-petclinicapp/petclinic_chart     0.0.1           0.1.0           A Helm chart for Kubernetes
+=======
+stable-petclinicapp/petclinic_chart     1.1.2           0.1.0           A Helm chart for Kubernetes
+stable-petclinicapp/petclinic_chart     1.1.1           0.1.0           A Helm chart for Kubernetes
+>>>>>>> feature/msp-18
 ```
 
 * In Chart.yaml, set the `version` value to `HELM_VERSION` in Chart.yaml for automation in jenkins pipeline.
@@ -3109,6 +3133,23 @@ docker push "${IMAGE_TAG_PROMETHEUS_SERVICE}"
         --namespace petclinic-qa
 ```
 
+<<<<<<< HEAD
+=======
+- Create Ansible playbook for deploying app on QA environment and save it as `pb_deploy_app_on_qa_environment.yaml` under `ansible/playbooks` folder.
+
+```yaml
+echo 'Deploying App on Kubernetes'
+sh "envsubst < k8s/petclinic_chart/values-template.yaml > k8s/petclinic_chart/values.yaml"
+sh "sed -i s/HELM_VERSION/${BUILD_NUMBER}/ k8s/petclinic_chart/Chartyaml"
+sh "helm repo add stable-petclinic s3://petclinic-helm-charts-<put-your-name>/stablemyapp/"
+sh "helm package k8s/petclinic_chart"
+sh "helm s3 push petclinic_chart-${BUILD_NUMBER}.tgz stable-petclinic"
+sh "envsubst < ansible/playbooks/qa-petclinic-deploy-template >ansible/playbooks/qa-petclinic-deploy.yaml"
+sh "sleep 60"    
+sh "ansible-playbook -i ./ansible/inventory/qa_stack_dynamic_inventory_aws_ec2.yaml ./ansible/playbooks/qa-petclinic-deploy.yaml"
+```
+
+>>>>>>> feature/msp-18
 - Prepare a script to deploy the application on QA environment and save it as `deploy_app_on_qa_environment.sh` under `ansible/scripts` folder.
 
 ```bash
@@ -3288,6 +3329,7 @@ git checkout dev
 git merge feature/msp-22
 git push origin dev
 ```
+<<<<<<< HEAD
 
 - Merge `dev` into `release` branch to build and deploy the app on `QA environment` with pipeline.
 
@@ -3594,5 +3636,13 @@ git commit -m 'added rancher setup files'
 git push --set-upstream origin feature/msp-23
 git checkout release
 git merge feature/msp-23
+=======
+
+- Merge `dev` into `release` branch to build and deploy the app on `QA environment` with pipeline.
+
+```bash
+git checkout release
+git merge dev
+>>>>>>> feature/msp-18
 git push origin release
 ```
