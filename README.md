@@ -3133,8 +3133,6 @@ docker push "${IMAGE_TAG_PROMETHEUS_SERVICE}"
         --namespace petclinic-qa
 ```
 
-<<<<<<< HEAD
-=======
 - Create Ansible playbook for deploying app on QA environment and save it as `pb_deploy_app_on_qa_environment.yaml` under `ansible/playbooks` folder.
 
 ```yaml
@@ -3149,7 +3147,6 @@ sh "sleep 60"
 sh "ansible-playbook -i ./ansible/inventory/qa_stack_dynamic_inventory_aws_ec2.yaml ./ansible/playbooks/qa-petclinic-deploy.yaml"
 ```
 
->>>>>>> feature/msp-18
 - Prepare a script to deploy the application on QA environment and save it as `deploy_app_on_qa_environment.sh` under `ansible/scripts` folder.
 
 ```bash
