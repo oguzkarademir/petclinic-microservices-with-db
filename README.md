@@ -1750,7 +1750,7 @@ AWS_REGION="us-east-1"
 cd infrastructure/dev-k8s-terraform
 sed -i "s/mattkey/$ANS_KEYPAIR/g" main.tf
 terraform init
-terraform apply -auto-approve
+terraform apply -auto-approve -no-color
 ```
 
 - After running the job above, replace the script with the one below in order to test SSH connection with one of the instances.
@@ -1796,6 +1796,7 @@ regions:
 filters:
   tag:Project: tera-kube-ans
   tag:environment: dev
+  instance-state-name: running
 keyed_groups:
   - key: tags['Project']
     prefix: 'all_instances'
@@ -2086,7 +2087,7 @@ ansible-playbook -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml
 
 ```bash
 cd infrastructure/dev-k8s-terraform
-terraform destroy -auto-approve
+terraform destroy -auto-approve -no-color
 ```
 
 - After running the job above, replace the script with the one below in order to test deleting existing key pair using AWS CLI with following script.
@@ -2115,13 +2116,13 @@ chmod 400 ${ANS_KEYPAIR}
 # Create infrastructure for kubernetes
 cd infrastructure/dev-k8s-terraform
 terraform init
-terraform apply -auto-approve
+terraform apply -auto-approve -no-color
 # Install k8s cluster on the infrastructure
 ansible-playbook -i ./ansible/inventory/dev_stack_dynamic_inventory_aws_ec2.yaml ./ansible/playbooks/k8s_setup.yaml
 # Build, Deploy, Test the application
 # Tear down the k8s infrastructure
 cd infrastructure/dev-k8s-terraform
-terraform destroy -auto-approve
+terraform destroy -auto-approve -no-color
 # Delete key pair
 aws ec2 delete-key-pair --region ${AWS_REGION} --key-name ${ANS_KEYPAIR}
 rm -rf ${ANS_KEYPAIR}
@@ -2140,11 +2141,7 @@ git push origin dev
 
 ## MSP 17 - Prepare Petlinic Kubernetes YAML Files
 
-<<<<<<< HEAD
 * Create `feature/msp-17` branch from `dev`.
-=======
-* Create `feature/msp-17` branch from `release`.
->>>>>>> feature/msp-18
 
 ``` bash
 git checkout dev
@@ -2372,11 +2369,7 @@ AWS_REGION=us-east-1 helm repo add stable-petclinicapp s3://petclinic-helm-chart
 * Update `version` and `appVersion` field of `k8s/petclinic_chart/Chart.yaml` file as below for testing.
 
 ```yaml
-<<<<<<< HEAD
 version: 0.0.1
-=======
-version: 1.1.1
->>>>>>> feature/msp-18
 appVersion: 0.1.0
 ```
 
@@ -2403,17 +2396,10 @@ helm search repo stable-petclinicapp
 
 ```bash
 NAME                                    CHART VERSION   APP VERSION     DESCRIPTION                
-<<<<<<< HEAD
 stable-petclinicapp/petclinic_chart     0.0.1           0.1.0           A Helm chart for Kubernetes
 ```
 
 * In Chart.yaml, set the `version` value to `0.0.2` in Chart.yaml, and then package the chart, this time changing the version in Chart.yaml to 0.0.2. Version control is ideally achieved through automation by using tools like GitVersion or Jenkins build numbers in a CI/CD pipeline. 
-=======
-stable-petclinicapp/petclinic_chart     1.1.1           0.1.0           A Helm chart for Kubernetes
-```
-
-* In Chart.yaml, set the `version` value to `1.1.2` in Chart.yaml, and then package the chart, this time changing the version in Chart.yaml to 1.1.2. Version control is ideally achieved through automation by using tools like GitVersion or Jenkins build numbers in a CI/CD pipeline. 
->>>>>>> feature/msp-18
 
 ```bash
 helm package petclinic_chart/
@@ -2437,11 +2423,7 @@ helm search repo stable-petclinicapp -l
 
 ```bash
 NAME                                    CHART VERSION   APP VERSION     DESCRIPTION                
-<<<<<<< HEAD
 stable-petclinicapp/petclinic_chart     0.0.2           0.1.0           A Helm chart for Kubernetes
-=======
-stable-petclinicapp/petclinic_chart     1.1.2           0.1.0           A Helm chart for Kubernetes
->>>>>>> feature/msp-18
 ```
 
 * To view all the available versions of a chart execute following command.
@@ -2454,13 +2436,8 @@ helm search repo stable-petclinicapp --versions
 
 ```bash
 NAME                                    CHART VERSION   APP VERSION     DESCRIPTION                
-<<<<<<< HEAD
 stable-petclinicapp/petclinic_chart     0.0.2           0.1.0           A Helm chart for Kubernetes
 stable-petclinicapp/petclinic_chart     0.0.1           0.1.0           A Helm chart for Kubernetes
-=======
-stable-petclinicapp/petclinic_chart     1.1.2           0.1.0           A Helm chart for Kubernetes
-stable-petclinicapp/petclinic_chart     1.1.1           0.1.0           A Helm chart for Kubernetes
->>>>>>> feature/msp-18
 ```
 
 * In Chart.yaml, set the `version` value to `HELM_VERSION` in Chart.yaml for automation in jenkins pipeline.
@@ -2795,7 +2772,7 @@ pipeline {
                     cd infrastructure/dev-k8s-terraform
                     sed -i "s/mattkey/$ANS_KEYPAIR/g" main.tf
                     terraform init
-                    terraform apply -auto-approve
+                    terraform apply -auto-approve -no-color
                 """
                 script {
                     echo "Kubernetes Master is not UP and running yet."
@@ -2869,7 +2846,7 @@ pipeline {
             echo 'Tear down the Kubernetes Cluster'
             sh """
             cd infrastructure/dev-k8s-terraform
-            terraform destroy -auto-approve
+            terraform destroy -auto-approve -no-color
             """
             echo "Delete existing key pair using AWS CLI"
             sh "aws ec2 delete-key-pair --region ${AWS_REGION} --key-name ${ANS_KEYPAIR}"
@@ -2937,7 +2914,7 @@ ANS_KEYPAIR="matt-${APP_NAME}-qa.key"
 AWS_REGION="us-east-1"
 cd infrastructure/qa-k8s-terraform
 terraform init
-terraform apply -auto-approve
+terraform apply -auto-approve -no-color
 ```
 
 - Prepare dynamic inventory file with name of `qa_stack_dynamic_inventory_aws_ec2.yaml` for Ansible under `ansible/inventory` folder using Docker machines private IP addresses.
@@ -2949,6 +2926,7 @@ regions:
 filters:
   tag:Project: tera-kube-ans
   tag:environment: qa
+  instance-state-name: running
 keyed_groups:
   - key: tags['Project']
     prefix: 'all_instances'
@@ -2981,7 +2959,7 @@ pipeline {
                     cd infrastructure/qa-k8s-terraform
                     sed -i "s/mattkey/$ANS_KEYPAIR/g" main.tf
                     terraform init
-                    terraform apply -auto-approve
+                    terraform apply -auto-approve -no-color
                 """
                 script {
                     echo "Kubernetes Master is not UP and running yet."
@@ -3004,7 +2982,7 @@ pipeline {
             echo 'Tear down the Kubernetes Cluster infrastructure'
             sh """
             cd ${WORKSPACE}/infrastructure/qa-k8s-terraform
-            terraform destroy -auto-approve
+            terraform destroy -auto-approve -no-color
             """
         }
     }
@@ -3131,20 +3109,6 @@ docker push "${IMAGE_TAG_PROMETHEUS_SERVICE}"
       AWS_REGION=$AWS_REGION helm upgrade --install \
         petclinic-app-release stable-petclinic/petclinic_chart --version ${BUILD_NUMBER} \
         --namespace petclinic-qa
-```
-
-- Create Ansible playbook for deploying app on QA environment and save it as `pb_deploy_app_on_qa_environment.yaml` under `ansible/playbooks` folder.
-
-```yaml
-echo 'Deploying App on Kubernetes'
-sh "envsubst < k8s/petclinic_chart/values-template.yaml > k8s/petclinic_chart/values.yaml"
-sh "sed -i s/HELM_VERSION/${BUILD_NUMBER}/ k8s/petclinic_chart/Chartyaml"
-sh "helm repo add stable-petclinic s3://petclinic-helm-charts-<put-your-name>/stablemyapp/"
-sh "helm package k8s/petclinic_chart"
-sh "helm s3 push petclinic_chart-${BUILD_NUMBER}.tgz stable-petclinic"
-sh "envsubst < ansible/playbooks/qa-petclinic-deploy-template >ansible/playbooks/qa-petclinic-deploy.yaml"
-sh "sleep 60"    
-sh "ansible-playbook -i ./ansible/inventory/qa_stack_dynamic_inventory_aws_ec2.yaml ./ansible/playbooks/qa-petclinic-deploy.yaml"
 ```
 
 - Prepare a script to deploy the application on QA environment and save it as `deploy_app_on_qa_environment.sh` under `ansible/scripts` folder.
@@ -3326,7 +3290,6 @@ git checkout dev
 git merge feature/msp-22
 git push origin dev
 ```
-<<<<<<< HEAD
 
 - Merge `dev` into `release` branch to build and deploy the app on `QA environment` with pipeline.
 
@@ -3633,13 +3596,60 @@ git commit -m 'added rancher setup files'
 git push --set-upstream origin feature/msp-23
 git checkout release
 git merge feature/msp-23
-=======
+git push origin release
+```
 
-- Merge `dev` into `release` branch to build and deploy the app on `QA environment` with pipeline.
+## MSP 24 - Install Rancher App on RKE Kubernetes Cluster
+
+* Install Helm [version 3+](https://github.com/helm/helm/releases) on Jenkins Server. [Introduction to Helm](https://helm.sh/docs/intro/). [Helm Installation](https://helm.sh/docs/intro/install/).
 
 ```bash
-git checkout release
-git merge dev
->>>>>>> feature/msp-18
-git push origin release
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+helm version
+```
+
+* Add helm chart repositories of Rancher.
+
+```bash
+helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
+helm repo list
+```
+
+* Create a namespace for Rancher.
+
+```bash
+kubectl create namespace cattle-system
+```
+
+* Install Rancher on RKE Kubernetes Cluster using Helm.
+
+```bash
+helm install rancher rancher-latest/rancher \
+  --namespace cattle-system \
+  --set hostname=rancher.clarusway.us \
+  --set tls=external \
+  --set replicas=1
+```
+
+* Check if the Rancher Server is deployed successfully.
+  
+```bash
+kubectl -n cattle-system get deploy rancher
+kubectl -n cattle-system get pods
+```
+
+## MSP 25 - Create Staging and Production Environment with Rancher
+
+* To provide access of Rancher to the cloud resources, create a `Cloud Credentials` for AWS on Rancher and name it as `Call-AWS-Training-Account`.
+
+* Create a `Node Template` on Rancher with following configuration for to be used while launching the EC2 instances and name it as `Call-AWS-RancherOs-Template`.
+
+```text
+Region            : us-east-1
+Security group    : create new sg (rancher-nodes)
+Instance Type     : t2.medium
+Root Disk Size    : 16 GB
+AMI (RancherOS)   : ami-0e8a3347e4c5959bd
+SSH User          : rancher
+Label             : os=rancheros
 ```
